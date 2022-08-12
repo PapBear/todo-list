@@ -1,0 +1,16 @@
+//Settings
+@import "settings/variables";
+@import "settings/color";
+
+//Tools
+@import "tools/mixins";
+@import "tools/pseudo";
+
+//Generic
+@import "generic/reset";
+
+//Elements
+@import "elements/fonts";
+
+//Components
+@import "views/home.scss"
