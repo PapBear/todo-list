@@ -1,7 +1,9 @@
 <template>
   <div id="app">
     <HeaderView></HeaderView>
-    <router-view/>
+    <div class="app__container">
+      <router-view/>
+    </div>
   </div>
 </template>
 

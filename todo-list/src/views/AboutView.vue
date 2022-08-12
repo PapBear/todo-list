@@ -1,5 +1,5 @@
 <template>
-  <div class="about">
-    <h1>This is an about page</h1>
+  <div class="dashboard__container">
+    <p class="dashboard__header">Activity</p>
   </div>
 </template>
