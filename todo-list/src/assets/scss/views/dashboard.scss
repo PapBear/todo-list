@@ -1,0 +1,39 @@
+.dashboard {
+	&__container{ 
+
+	}
+	&__header {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		&-text {
+			flex: 0.5;
+			align-items: flex-start;
+			font-weight: 700;
+			font-size: 36px;
+			line-height: 54px;
+		}
+		&-button {
+			flex: 0.5;
+			display: flex;
+			justify-content: flex-end;
+			&-shape {
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				cursor: pointer;
+				padding: 13.5px 29px 13.5px 27px;
+				background-color: #16ABF8;
+				width: fit-content;
+				border-radius: 45px;
+				&-text {
+					font-weight: 600;
+					font-size: 18px;
+					line-height: 27px;
+					color: #FFFFFF;
+					margin-left: 6px;
+				}
+			}
+		}
+	}
+}
