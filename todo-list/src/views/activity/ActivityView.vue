@@ -1,29 +1,16 @@
 <template>
-  <div class="dashboard__container">
-    <div class="dashboard__header">
-      <p data-cy="activity-title" class="dashboard__header-text">Activity</p>
-      <div class="dashboard__header-button">
-        <div data-cy="activity-add-button" class="dashboard__header-button-shape">
+  <div class="activity__container">
+    <div class="activity__header">
+      <p data-cy="activity-title" class="activity__header-text">Activity</p>
+      <div class="activity__header-button">
+        <div data-cy="activity-add-button" class="activity__header-button-shape">
           <Plus></Plus>
-          <p class="dashboard__header-button-shape-text" @click="createNewActivity()">Tambah</p>
+          <p class="activity__header-button-shape-text" @click="createNewActivity()">Tambah</p>
         </div>
       </div>
     </div>
-    <div class="dashboard__empty-state">
-      <div class="dashboard__list-card-container" v-if="listActivity.length > 0">
-        <div dt-cy="activity-item" class="dashboard__list-card" v-for="(dt,index) in listActivity" :key="index">
-          <p dt-cy="activity-item-title" class="dashboard__list-card-text">{{dt.title}}</p>
-          <div class="dashboard__list-card-bottom-section">
-            <div class="dashboard__list-card-bottom-section-wrapper">
-              <p dt-cy="activity-item-title" class="dashboard__list-card-bottom-section-date">{{dt.created_at | moment("D MMMM YYYY")}}</p>
-              <div dt-cy="activity-item-delete-button" class="dashboard__list-card-bottom-section-button" @click="setVisibilityDeletePopup(dt)">
-                <DeleteButton></DeleteButton>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <ActivityEmptyStateVue v-else></ActivityEmptyStateVue>
+    <div class="activity__empty-state">
+      <ActivityEmptyStateVue></ActivityEmptyStateVue>
     </div>
 
     <!-- Modal -->
@@ -33,16 +20,14 @@
 
 <script>
 import Plus from "../../assets/images/PlusIcon.vue"
-import DeleteButton from "../../assets/images/DeleteButton.vue";
 import ActivityEmptyStateVue from "@/components/ActivityEmptyState.vue";
 import PopupView from "@/components/PopupView.vue";
 
 export default {
-  name: 'DashboardView',
+  name: 'ActivityView',
   components: {
     Plus,
     ActivityEmptyStateVue,
-    DeleteButton,
     PopupView
   },
   data() {

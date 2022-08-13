@@ -6,7 +6,7 @@
 
 <script>
 
-import PersonEmptyStateVue from '@/assets/images/PersonEmptyState2.vue';
+import PersonEmptyStateVue from '@/assets/images/ActivityEmptyState.vue';
 
 export default {
   name: 'ActivityEmptyState',

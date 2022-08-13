@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Dashboard from '../views/dashboard/DashboardView.vue'
+import Activity from '../views/activity/ActivityView.vue'
 
 Vue.use(VueRouter)
 
@@ -9,6 +10,11 @@ const routes = [
     path: '/',
     name: 'Dashboard',
     component: Dashboard
+  },
+  {
+    path: '/activity',
+    name: 'Activity',
+    component: Activity
   },
 ]
 
