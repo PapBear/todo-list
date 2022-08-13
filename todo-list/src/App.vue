@@ -9,6 +9,11 @@
 
 <script>
 import HeaderView from "./components/HeaderView.vue";
+import Vue from 'vue' 
+import axios from 'axios'
+import VueAxios from 'vue-axios'
+Vue.use(VueAxios, axios)
+Vue.use(require('vue-moment'));
 
 export default {
   name: 'app',

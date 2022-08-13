@@ -5,28 +5,86 @@
       <div class="dashboard__header-button">
         <div data-cy="activity-add-button" class="dashboard__header-button-shape">
           <Plus></Plus>
-          <p class="dashboard__header-button-shape-text">Tambah</p>
+          <p class="dashboard__header-button-shape-text" @click="createNewActivity()">Tambah</p>
         </div>
       </div>
     </div>
     <div class="dashboard__empty-state">
-      <ActivityEmptyStateVue></ActivityEmptyStateVue>
+      <div class="dashboard__list-card-container" v-if="listActivity.length > 0">
+        <div dt-cy="activity-item" class="dashboard__list-card" v-for="(dt,index) in listActivity" :key="index">
+          <p dt-cy="activity-item-title" class="dashboard__list-card-text">{{dt.title}}</p>
+          <div class="dashboard__list-card-bottom-section">
+            <div class="dashboard__list-card-bottom-section-wrapper">
+              <p dt-cy="activity-item-title" class="dashboard__list-card-bottom-section-date">{{dt.created_at | moment("D MMMM YYYY")}}</p>
+              <div dt-cy="activity-item-delete-button" class="dashboard__list-card-bottom-section-button" @click="setVisibilityDeletePopup()">
+                <DeleteButton></DeleteButton>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ActivityEmptyStateVue v-else></ActivityEmptyStateVue>
     </div>
+
+    <!-- Modal -->
+    <PopupView v-if="deletePopup" :activityName="'New Activity'"></PopupView>
   </div>
 </template>
 
 <script>
 import Plus from "../../assets/images/PlusIcon.vue"
+import DeleteButton from "../../assets/images/DeleteButton.vue";
 import ActivityEmptyStateVue from "@/components/ActivityEmptyState.vue";
+import PopupView from "@/components/PopupView.vue";
 
 export default {
   name: 'DashboardView',
   components: {
     Plus,
-    ActivityEmptyStateVue
+    ActivityEmptyStateVue,
+    DeleteButton,
+    PopupView
   },
   data() {
     return {
+      listActivity: [],
+      deletePopup: false,
+    }
+  },
+  mounted() {
+    this.getListCardData()
+  },
+  methods: {
+    getListCardData() {
+      // const encodeEmail = encodeURIComponent("joshuahendrawan03@gmail.com")
+
+      this.$http.get("https://todo.api.devcode.gethired.id/activity-groups", {params: {email: "joshuahendrawan03@gmail.com"}}).then((response) => {
+        this.listActivity = response.data.data
+        console.log(this.listActivity)
+      }, err => {
+        console.log(err)
+      })
+    },
+    createNewActivity() {
+      const formData = {
+        "title": "New Activity",
+        "email": "joshuahendrawan03@gmail.com",
+      }
+      this.$http.post("https://todo.api.devcode.gethired.id/activity-groups", formData).then(() => {
+        this.getListCardData()
+      }, err => {
+        console.log(err)
+      })
+    },
+    deleteActivity(id) {
+      this.$http.delete("https://todo.api.devcode.gethired.id/activity-groups/"+id).then(() => {
+        this.getListCardData()
+      }, err => {
+        console.log(err)
+      })
+    },
+    setVisibilityDeletePopup() {
+      this.deletePopup = !this.deletePopup
     }
   }
 }
