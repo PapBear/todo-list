@@ -20,9 +20,9 @@
       <div class="activity-detail__list-item-container" v-if="listItem?.todo_items?.length > 0">
         <div class="activity-detail__list-item" v-for="(dt,index) in listItem.todo_items" :key="index">
           <div class="activity-detail__list-item-content">
-            <input type="checkbox" class="activity-detail__list-item-content-checkbox" :class="{'activity-detail__list-item-checkbox_checked': !dt.is_active}" v-model="dt.is_active" :true-value="false" :false-value="true"/>
+            <input type="checkbox" class="activity-detail__list-item-content-checkbox" :class="{'activity-detail__list-item-checkbox_checked': dt.is_active === false}" v-model="dt.is_active" @click="updateActive(dt)"/>
             <StatusView :status="dt.priority"></StatusView>
-            <p class="activity-detail__list-item-content-title">{{dt.title}}</p>
+            <p class="activity-detail__list-item-content-title" :class="{'activity-detail__list-item-content-title_done': dt.is_active === true}">{{dt.title}}</p>
             <div class="activity-detail__list-item-content-edit">
               <EditIcon></EditIcon>
             </div>
@@ -36,7 +36,7 @@
     </div>
 
     <!-- Modal -->
-    <PopupView v-if="deletePopup" :activityName="'New Activity'" @close-modal="eventModalClossed" @get-list-card="getListCardData" :activityId="selectedId"></PopupView>
+    <AddItem></AddItem>
   </div>
 </template>
 
@@ -45,23 +45,23 @@ import Plus from "../../assets/images/PlusIcon.vue"
 import EditIcon from "../../assets/images/EditIcon.vue";
 import DeleteButtonVue from "@/assets/images/DeleteButton.vue";
 import ActivityEmptyStateVue from "@/components/ActivityEmptyState.vue";
-import PopupView from "@/components/PopupView.vue";
 import ChevronLeftVue from "@/components/ChevronLeft.vue";
 import StatusView from "@/components/StatusView.vue";
 
 import ClickOutside from 'vue-click-outside'
+import AddItem from "@/components/AddItem.vue";
 
 export default {
   name: 'ActivityView',
   components: {
     Plus,
     ActivityEmptyStateVue,
-    PopupView,
     ChevronLeftVue,
     EditIcon,
     DeleteButtonVue,
-    StatusView
-  },
+    StatusView,
+    AddItem
+},
 
   data() {
     return {
@@ -69,7 +69,8 @@ export default {
       selectedId: 0,
       deletePopup: false,
       inputFocused: false,
-      inputValue: "-"
+      inputValue: "-",
+      checkedList: []
     }
   },
   mounted() {
@@ -79,6 +80,13 @@ export default {
     getListItem() {
       this.$http.get("https://todo.api.devcode.gethired.id/activity-groups/"+this.$route.params.id).then((response) => {
         this.listItem = response.data
+        this.listItem.todo_items.forEach(dt => {
+          if(dt.is_active === 0) {
+            dt.is_active = true
+          } else {
+            dt.is_active = false
+          }
+        })
         this.inputValue = this.listItem.title
       }, err => {
         console.log(err)
@@ -90,6 +98,17 @@ export default {
           ...this.listItem,
           title: response.data.title
         }
+      }, err => {
+        console.log(err)
+      })
+    },
+    updateActive(data) {
+      const formData = {
+        is_active: data.is_active === true ? 1 : 0,
+        priority: data.priority
+      }
+      this.$http.patch("https://todo.api.devcode.gethired.id/todo-items/"+data.id, formData).then(() => {
+        //
       }, err => {
         console.log(err)
       })
@@ -128,6 +147,13 @@ export default {
     },
     backToDashboard() {
       this.$router.push("/")
+    },
+    returnActive(data) {
+      if(data.is_active === 0) {
+        return false
+      } else {
+        return true
+      }
     }
   },
 

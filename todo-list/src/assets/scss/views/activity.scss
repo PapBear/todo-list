@@ -85,6 +85,10 @@
 					line-height: 27px;
 					color: #111111;
 					margin: 0px 16px;
+					&_done {
+						text-decoration-line: line-through;
+						color: #888888;
+					}
 				}
 				&-edit {
 					cursor: pointer;

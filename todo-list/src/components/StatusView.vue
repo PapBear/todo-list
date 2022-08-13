@@ -1,5 +1,5 @@
 <template>
-  <div class="status__circle" :class="{'status__circle_orange': status === 'high', 'status__circle_green': status === 'normal', 'status__circle_blue': status === 'low', 'status__circle_purple': status === 'very-low'}">
+  <div class="status__circle" :class="{'status__circle_orange': status === 'high', 'status__circle_green': status === 'normal', 'status__circle_blue': status === 'low', 'status__circle_purple': status === 'very-low', 'status__circle_bigger': bigger}">
 
   </div>
 </template>
@@ -7,7 +7,8 @@
 <script>
 export default {
   props: {
-    status: String
+    status: String,
+    bigger: Boolean
   },
   data() {
     return {
@@ -40,6 +41,10 @@ export default {
       }
       &_purple {
         background-color: #8942C1;
+      }
+      &_bigger {
+        width: 14px;
+        height: 14px;
       }
     }
   }
