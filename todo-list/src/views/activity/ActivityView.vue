@@ -10,9 +10,29 @@
         <EditIcon></EditIcon>
       </div>
       <div class="activity-detail__header-button">
+        <div class="activity-detail__header-button-sort">
+          <div class="activity-detail__header-button-sort-shape" @click="setSortPopup()">
+            <MenuArrow></MenuArrow>
+          </div>
+          <div class="activity-detail__header-button-sort-menu-container" v-if="sortPopup">
+            <div class="activity-detail__header-button-sort-menu" v-for="(dt, index) in sortList" :key="index" @click="selectSort(dt)">
+              <div class="activity-detail__header-button-sort-menu-item">
+                <SortLatest v-if="dt === 'Terbaru'"></SortLatest>
+                <SortOldest v-else-if="dt === 'Terlama'"></SortOldest>
+                <SortAZ v-else-if="dt === 'A-Z'"></SortAZ>
+                <SortZA v-else-if="dt === 'Z-A'"></SortZA>
+                <SortUnfinished v-else-if="dt === 'Belum Selesai'"></SortUnfinished>
+                <p class="activity-detail__header-button-sort-menu-item-text">{{dt}}</p>
+                <div class="activity-detail__header-button-sort-menu-item-checklist" v-if="dt === selectedSort">
+                  <ChecklistIcon></ChecklistIcon>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <div data-cy="activity-add-button" class="activity-detail__header-button-shape">
           <Plus></Plus>
-          <p class="activity-detail__header-button-shape-text" @click="createNewActivity()">Tambah</p>
+          <p class="activity-detail__header-button-shape-text" @click="setVisibilityAddPopup()">Tambah</p>
         </div>
       </div>
     </div>
@@ -26,7 +46,7 @@
             <div class="activity-detail__list-item-content-edit">
               <EditIcon></EditIcon>
             </div>
-            <div class="activity-detail__list-item-content-delete">
+            <div class="activity-detail__list-item-content-delete" @click="setVisibilityDeletePopup(dt)">
               <DeleteButtonVue></DeleteButtonVue>
             </div>
           </div>
@@ -36,7 +56,8 @@
     </div>
 
     <!-- Modal -->
-    <AddItem></AddItem>
+    <AddItem v-if="addPopup" @close-modal="eventModalClossed" @get-list-item="getListItem"></AddItem>
+    <PopupView v-if="deletePopup" :type="'item'" :activityName="selectedData.title" @close-modal="eventModalClossed" @get-list-card="getListItem" :activityId="selectedData.id"></PopupView>
   </div>
 </template>
 
@@ -50,6 +71,14 @@ import StatusView from "@/components/StatusView.vue";
 
 import ClickOutside from 'vue-click-outside'
 import AddItem from "@/components/AddItem.vue";
+import PopupView from "@/components/PopupView.vue";
+import MenuArrow from "@/assets/images/MenuArrow.vue";
+import SortLatest from "../../assets/images/SortLatest.vue";
+import SortOldest from "../../assets/images/SortOldest.vue";
+import SortAZ from "../../assets/images/SortAZ.vue";
+import SortZA from "../../assets/images/SortZA.vue";
+import SortUnfinished from "../../assets/images/SortUnfinished.vue";
+import ChecklistIcon from "@/assets/images/ChecklistIcon.vue";
 
 export default {
   name: 'ActivityView',
@@ -60,17 +89,30 @@ export default {
     EditIcon,
     DeleteButtonVue,
     StatusView,
-    AddItem
+    AddItem,
+    PopupView,
+    MenuArrow,
+    SortLatest,
+    SortOldest,
+    SortAZ,
+    SortZA,
+    SortUnfinished,
+    ChecklistIcon
 },
 
   data() {
     return {
       listItem: [],
-      selectedId: 0,
+      originalListItem: [],
+      selectedData: 0,
       deletePopup: false,
+      addPopup: false,
+      sortPopup: false,
       inputFocused: false,
       inputValue: "-",
-      checkedList: []
+      checkedList: [],
+      selectedSort: "Terbaru",
+      sortList: ["Terbaru", "Terlama", "A-Z", "Z-A", "Belum Selesai"]
     }
   },
   mounted() {
@@ -80,6 +122,7 @@ export default {
     getListItem() {
       this.$http.get("https://todo.api.devcode.gethired.id/activity-groups/"+this.$route.params.id).then((response) => {
         this.listItem = response.data
+        this.originalListItem = response.data
         this.listItem.todo_items.forEach(dt => {
           if(dt.is_active === 0) {
             dt.is_active = true
@@ -96,6 +139,10 @@ export default {
       this.$http.patch("https://todo.api.devcode.gethired.id/activity-groups/"+this.$route.params.id, {title: this.inputValue ? this.inputValue : "-"}).then((response) => {
         this.listItem = {
           ...this.listItem,
+          title: response.data.title
+        }
+        this.originalListItem = {
+          ...this.originalListItem,
           title: response.data.title
         }
       }, err => {
@@ -126,12 +173,15 @@ export default {
     },
     setVisibilityDeletePopup(dt) {
       this.deletePopup = !this.deletePopup
-      this.selectedId = dt.id
-      console.log(this.selectedId)
+      this.selectedData = dt
+    },
+    setVisibilityAddPopup() {
+      this.addPopup = !this.addPopup
     },
     eventModalClossed() {
       setTimeout(() => {
         this.deletePopup = false
+        this.addPopup = false
       }, 250)
     },
     setInputFocus(param) {
@@ -153,6 +203,39 @@ export default {
         return false
       } else {
         return true
+      }
+    },
+    setSortPopup() {
+      this.sortPopup = !this.sortPopup
+    },
+    selectSort(data) {
+      this.selectedSort = data
+      this.sortPopup = false
+      if(data === "Terbaru") {
+        this.listItem = this.originalListItem
+      } else if(data === "Terlama") {
+        const originalData = JSON.parse(JSON.stringify(this.originalListItem))
+        this.listItem = originalData
+        this.listItem.todo_items.reverse()
+      } else if(data === "A-Z") {
+        this.listItem.todo_items.sort((a, b) => {
+          if(a.title.toLowerCase() < b.title.toLowerCase() ) { return -1; }
+          if(a.title.toLowerCase() > b.title.toLowerCase() ) { return 1; }
+          return 0;
+        })
+      } else if(data === "Z-A") {
+        this.listItem.todo_items.sort((a, b) => {
+          if(a.title.toLowerCase() < b.title.toLowerCase() ) { return 1; }
+          if(a.title.toLowerCase() > b.title.toLowerCase() ) { return -1; }
+          return 0;
+        })
+      } else if(data === "Belum Selesai") {
+        console.log(this.listItem)
+        this.listItem.todo_items.sort((a, b) => {
+          if(a.is_active < b.is_active ) { return -1; }
+          if(a.is_active > b.is_active ) { return 1; }
+          return 0;
+        })
       }
     }
   },

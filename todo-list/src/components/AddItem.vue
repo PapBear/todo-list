@@ -4,7 +4,7 @@
     <div class="modal__add-content" :class="{'modal__add-content_show': initialShow}" v-show="state === 'popup'">
       <div class="modal__add-content-header">
         <p class="modal__add-content-header-text">Tambah List Item</p>
-        <div class="modal__add-content-header-icon">
+        <div class="modal__add-content-header-icon" @click="closeModal()">
           <CloseIcon></CloseIcon>
         </div>
       </div>
@@ -35,7 +35,7 @@
         </div>
 
       </div>
-      <div class="modal__add-content-button">
+      <div class="modal__add-content-button" @click="createNewItem()">
         <div class="modal__add-content-button-shape">
           <p class="modal__add-content-button-shape-text">Simpan</p>
         </div>
@@ -135,10 +135,11 @@ export default {
       const formData = {
         "activity_group_id": this.$route.params.id,
         "title": this.inputItem,
-        "priority": this.selectPriority.value,
+        "priority": this.selectedPriority.value,
       }
       this.$http.post("https://todo.api.devcode.gethired.id/todo-items", formData).then(() => {
-        // 
+        this.$emit("get-list-item")
+        this.closeModal()
       }, err => {
         console.log(err)
       })
@@ -180,10 +181,10 @@ export default {
         border-radius: 12px;
         display: flex;
         flex-direction: column;
+        width: 100%;
         &_show {
           top: 0;
           opacity: 1;
-          width: 100%;
         }
         &-header {
           display: flex;

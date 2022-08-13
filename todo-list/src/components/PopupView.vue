@@ -6,13 +6,13 @@
         <RedWarningVue></RedWarningVue>
       </div>
       <div class="modal__popup-content-text-container">
-        <p data-cy="modal-delete-title" class="modal__popup-content-text">Apakah anda yakin ingin menghapus activity <span class="modal__popup-content-text_bold">“{{activityName}}”</span> ?</p>
+        <p data-cy="modal-delete-title" class="modal__popup-content-text">Apakah anda yakin ingin menghapus {{type === "item" ? "List Item" : "activity"}} <span class="modal__popup-content-text_bold">“{{activityName}}”</span> ?</p>
       </div>
       <div class="modal__popup-content-button-container">
         <div data-cy="modal-delete-cancel-button" class="modal__popup-content-button" @click="closeModal()">
           <p class="modal__popup-content-button-text">Batal</p>
         </div>
-        <div data-cy="modal-delete-confirm-button" class="modal__popup-content-button modal__popup-content-button_delete" @click="deleteActivity()">
+        <div data-cy="modal-delete-confirm-button" class="modal__popup-content-button modal__popup-content-button_delete" @click="type === 'item' ? deleteItem() : deleteActivity()">
           <p class="modal__popup-content-button-text modal__popup-content-button-text_delete">Hapus</p>
         </div>
       </div>
@@ -37,7 +37,8 @@ import ClickOutside from 'vue-click-outside'
 export default {
   props: {
     activityName: String,
-    activityId: Number
+    activityId: Number,
+    type: String
   },
 
   components: {
@@ -84,6 +85,15 @@ export default {
           }, 100)
         }, 250)
         this.$emit("get-list-card")
+      }, err => {
+        console.log(err)
+      })
+    },
+    deleteItem() {
+      this.$http.delete("https://todo.api.devcode.gethired.id/todo-items/"+this.activityId).then(() => {
+        this.initialShow = false
+        this.$emit("get-list-card")
+        this.closeModal()
       }, err => {
         console.log(err)
       })

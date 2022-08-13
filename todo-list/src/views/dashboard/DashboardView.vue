@@ -29,7 +29,7 @@
     </div>
 
     <!-- Modal -->
-    <PopupView v-if="deletePopup" :activityName="'New Activity'" @close-modal="eventModalClossed" @get-list-card="getListCardData" :activityId="selectedId"></PopupView>
+    <PopupView v-if="deletePopup" :activityName="selectedData.title" @close-modal="eventModalClossed" @get-list-card="getListCardData" :activityId="selectedData.id"></PopupView>
   </div>
 </template>
 
@@ -81,7 +81,7 @@ export default {
     },
     setVisibilityDeletePopup(dt) {
       this.deletePopup = !this.deletePopup
-      this.selectedId = dt.id
+      this.selectedData = dt
     },
     eventModalClossed() {
       setTimeout(() => {
