@@ -12,7 +12,7 @@
     <div class="dashboard__empty-state">
       <div class="dashboard__list-card-container" v-if="listActivity.length > 0">
         <div dt-cy="activity-item" class="dashboard__list-card" v-for="(dt,index) in listActivity" :key="index">
-          <p dt-cy="activity-item-title" class="dashboard__list-card-text">{{dt.title}}</p>
+          <p dt-cy="activity-item-title" class="dashboard__list-card-text" @click="moveToDetail(dt.id)">{{dt.title}}</p>
           <div class="dashboard__list-card-bottom-section">
             <div class="dashboard__list-card-bottom-section-wrapper">
               <p dt-cy="activity-item-title" class="dashboard__list-card-bottom-section-date">{{dt.created_at | moment("D MMMM YYYY")}}</p>
@@ -23,7 +23,9 @@
           </div>
         </div>
       </div>
-      <ActivityEmptyStateVue v-else></ActivityEmptyStateVue>
+      <div @click="createNewActivity()" v-else>
+        <ActivityEmptyStateVue :imageNumber="1"></ActivityEmptyStateVue>
+      </div>
     </div>
 
     <!-- Modal -->
@@ -80,12 +82,14 @@ export default {
     setVisibilityDeletePopup(dt) {
       this.deletePopup = !this.deletePopup
       this.selectedId = dt.id
-      console.log(this.selectedId)
     },
     eventModalClossed() {
       setTimeout(() => {
         this.deletePopup = false
       }, 250)
+    },
+    moveToDetail(id) {
+      this.$router.push("/activity/"+id)
     }
   }
 }

@@ -1,17 +1,29 @@
-.activity {
+.activity-detail {
 	&__container{ 
 
 	}
 	&__header {
+		&-container {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			flex: 0.5;
+		}
 		display: flex;
 		flex-direction: row;
 		align-items: center;
 		&-text {
-			flex: 0.5;
 			align-items: flex-start;
 			font-weight: 700;
 			font-size: 36px;
 			line-height: 54px;
+			margin: 0px 19px;
+			outline: none;
+			background-color: transparent;
+			border: 0px;
+			&_focused {
+				border-bottom: 1px solid #111111;
+			}
 		}
 		&-button {
 			flex: 0.5;
@@ -35,54 +47,52 @@
 				}
 			}
 		}
+		&-back {
+			cursor: pointer;
+		}
 	}
 	&__list {
-		&-card {
-			cursor: pointer;
+		&-item {
 			&-container {
-				display: flex;
-				flex-direction: row;
-				flex-wrap: wrap;
-				margin-top: 49px;
-
+				margin-top: 48px;
 			}
-			padding: 22px 26px 25px 27px;
-			background: #FFFFFF;
+			position: relative;
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			width: 100%;
+			padding: 28px 28px 27px 28px;
+			background-color: #FFFFFF;
 			box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.1);
 			border-radius: 12px;
-			min-height: 234px;
-			flex: 0 0 auto;
-			width: 23%;
-			margin-right: 2%;
-			margin-bottom: 26px;
-			display: flex;
-    	flex-direction: column;
-			&-text {
-				flex: 0.5;
-				font-weight: 700;
-				font-size: 18px;
-				line-height: 27px;
-			}
-			&-bottom {
-				&-section {
-					flex: 0.5;
-					display: flex;
-					flex-direction: row;
-					align-items: flex-end;
-					&-wrapper {
-						display: flex;
-						align-items: center;
-						flex: 1;
+			margin-bottom: 10px;
+			&-content {
+				display: flex;
+				align-items: center;
+				&-checkbox {
+					width: 20px;
+					height: 20px;
+					background: #FFFFFF;
+					border: 1px solid #C7C7C7;
+					margin-right: 47px;
+					&_checked {
+						background-color: #16ABF8;
 					}
-					&-date {
-						flex: 1;
-					}
-					&-button {
-						cursor: pointer;
-						flex: 0.5;
-						justify-content: flex-end;
-						text-align: end;
-					}
+				}
+				&-title {
+					font-weight: 500;
+					font-size: 18px;
+					line-height: 27px;
+					color: #111111;
+					margin: 0px 16px;
+				}
+				&-edit {
+					cursor: pointer;
+				}
+				&-delete {
+					cursor: pointer;
+					position: absolute;
+					right: 29px;
 				}
 			}
 		}

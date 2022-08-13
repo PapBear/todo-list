@@ -58,14 +58,14 @@
 			display: flex;
     	flex-direction: column;
 			&-text {
-				flex: 0.5;
+				flex: 0.8;
 				font-weight: 700;
 				font-size: 18px;
 				line-height: 27px;
 			}
 			&-bottom {
 				&-section {
-					flex: 0.5;
+					flex: 0.2;
 					display: flex;
 					flex-direction: row;
 					align-items: flex-end;
