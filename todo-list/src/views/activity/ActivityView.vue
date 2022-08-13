@@ -43,7 +43,7 @@
             <input type="checkbox" class="activity-detail__list-item-content-checkbox" :class="{'activity-detail__list-item-checkbox_checked': dt.is_active === false}" v-model="dt.is_active" @click="updateActive(dt)"/>
             <StatusView :status="dt.priority"></StatusView>
             <p class="activity-detail__list-item-content-title" :class="{'activity-detail__list-item-content-title_done': dt.is_active === true}">{{dt.title}}</p>
-            <div class="activity-detail__list-item-content-edit">
+            <div class="activity-detail__list-item-content-edit" @click="setVisibilityAddPopup('edit', dt)">
               <EditIcon></EditIcon>
             </div>
             <div class="activity-detail__list-item-content-delete" @click="setVisibilityDeletePopup(dt)">
@@ -56,8 +56,8 @@
     </div>
 
     <!-- Modal -->
-    <AddItem v-if="addPopup" @close-modal="eventModalClossed" @get-list-item="getListItem"></AddItem>
-    <PopupView v-if="deletePopup" :type="'item'" :activityName="selectedData.title" @close-modal="eventModalClossed" @get-list-card="getListItem" :activityId="selectedData.id"></PopupView>
+    <AddItem v-if="addPopup" @close-modal="eventModalClossed" @get-list-item="getListItem" :titlePassed="editTitle" :statusPassed="editStatus" :typeModal="typePassed" :idPassed="idPassed"></AddItem>
+    <PopupView v-if="deletePopup" :type="'item'" :activityName="selectedData.title" @close-modal="eventModalClossed" @get-list-card="getListItem" :activityId="selectedData.id" ></PopupView>
   </div>
 </template>
 
@@ -112,7 +112,11 @@ export default {
       inputValue: "-",
       checkedList: [],
       selectedSort: "Terbaru",
-      sortList: ["Terbaru", "Terlama", "A-Z", "Z-A", "Belum Selesai"]
+      sortList: ["Terbaru", "Terlama", "A-Z", "Z-A", "Belum Selesai"],
+      editTitle: "",
+      editStatus: "",
+      typePassed: "",
+      idPassed: 0,
     }
   },
   mounted() {
@@ -123,6 +127,7 @@ export default {
       this.$http.get("https://todo.api.devcode.gethired.id/activity-groups/"+this.$route.params.id).then((response) => {
         this.listItem = response.data
         this.originalListItem = response.data
+        this.selectSort("Terbaru")
         this.listItem.todo_items.forEach(dt => {
           if(dt.is_active === 0) {
             dt.is_active = true
@@ -175,7 +180,18 @@ export default {
       this.deletePopup = !this.deletePopup
       this.selectedData = dt
     },
-    setVisibilityAddPopup() {
+    setVisibilityAddPopup(param = "", data) {
+      if(param === "edit") {
+        this.editStatus = data.priority
+        this.editTitle = data.title
+        this.typePassed = "edit"
+        this.idPassed = data.id
+      } else {
+        this.editStatus = ""
+        this.editTitle = ""
+        this.typePassed = ""
+        this.idPassed = 0
+      }
       this.addPopup = !this.addPopup
     },
     eventModalClossed() {
@@ -230,7 +246,6 @@ export default {
           return 0;
         })
       } else if(data === "Belum Selesai") {
-        console.log(this.listItem)
         this.listItem.todo_items.sort((a, b) => {
           if(a.is_active < b.is_active ) { return -1; }
           if(a.is_active > b.is_active ) { return 1; }

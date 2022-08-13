@@ -35,7 +35,7 @@
         </div>
 
       </div>
-      <div class="modal__add-content-button" @click="createNewItem()">
+      <div class="modal__add-content-button" @click="typeModal === 'edit' ? editItem() : createNewItem()">
         <div class="modal__add-content-button-shape">
           <p class="modal__add-content-button-shape-text">Simpan</p>
         </div>
@@ -55,7 +55,10 @@ import ChecklistIcon from '../assets/images/ChecklistIcon.vue'
 
 export default {
   props: {
-
+    titlePassed: String,
+    statusPassed: String,
+    typeModal: String,
+    idPassed: Number
   },
 
   components: {
@@ -108,6 +111,14 @@ export default {
     setTimeout(() => {
       this.initialShow = true
       this.firstLoad = true
+
+      console.log(this.typeModal)
+      if(this.typeModal === "edit") {
+        this.inputItem = this.titlePassed
+        const filteredItem = this.priorityList.filter(dt => dt.value === this.statusPassed)
+        this.selectedPriority = filteredItem[0]
+        console.log(this.idPassed)
+      }
     },)
   },
 
@@ -144,6 +155,18 @@ export default {
         console.log(err)
       })
     },
+    editItem() {
+      const formData = {
+        "priority": this.selectedPriority.value,
+        "title": this.inputItem,
+      }
+      this.$http.patch("https://todo.api.devcode.gethired.id/todo-items/"+this.idPassed, formData).then(() => {
+        this.$emit("get-list-item")
+        this.closeModal()
+      }, err => {
+        console.log(err)
+      })
+    }
   }
 }
 
