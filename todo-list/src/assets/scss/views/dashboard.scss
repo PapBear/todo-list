@@ -76,6 +76,10 @@
 					}
 					&-date {
 						flex: 1;
+						font-weight: 500;
+						font-size: 14px;
+						line-height: 21px;
+						color: #888888;
 					}
 					&-button {
 						cursor: pointer;
@@ -97,4 +101,51 @@
 			height: 100px;
 		}
 	}
+}
+
+@media screen and (max-width: 414px) {
+  .dashboard {
+    &__header {
+      padding: 0px;
+			&-text {
+				font-size: 16px;
+				list-style: 24px;
+			}
+			&-button {
+				&-shape {
+					&-text {
+						font-size: 12px;
+						line-height: 18px;
+					}
+				}
+			}
+    }
+		&__list {
+			&-card {
+				width: 48%;
+				margin-bottom: 15px;
+				min-height: 150px;
+				&:nth-child(odd) {
+					margin-left: 0;
+					margin-right: 2%;
+				}
+				&:nth-child(even) {
+					margin-left: 2%;
+					margin-right: 0;
+				}
+				&-text {
+					font-size: 14px;
+					line-height: 21px;
+				}
+				&-bottom {
+					&-section {
+						&-date {
+							font-size: 10px;
+							line-height: 15px;
+						}
+					}
+				}
+			}
+		}
+  }
 }

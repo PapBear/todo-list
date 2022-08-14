@@ -64,3 +64,15 @@ table {
 body {
   background-color: #F4F4F4;
 }
+
+@media screen and (max-width: 414px) {
+  .app__container {
+    padding: 43px 20px;
+    margin: 0;
+  }
+
+  .dashboard__list-card-bottom-section-button > svg {
+    width: 8px;
+    height: 9px;
+  }
+}
