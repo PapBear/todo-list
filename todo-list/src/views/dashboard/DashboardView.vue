@@ -9,7 +9,10 @@
         </div>
       </div>
     </div>
-    <div class="dashboard__empty-state">
+    <div class="dashboard__loading" v-if="initialLoading">
+      <img class="dashboard__loading-img" src="../../assets/images/SpinnerTransparent.gif" />
+    </div>
+    <div class="dashboard__empty-state" v-else>
       <div class="dashboard__list-card-container" v-if="listActivity.length > 0">
         <div dt-cy="activity-item" class="dashboard__list-card" v-for="(dt,index) in listActivity" :key="index">
           <p dt-cy="activity-item-title" class="dashboard__list-card-text" @click="moveToDetail(dt.id)">{{dt.title}}</p>
@@ -27,7 +30,6 @@
         <ActivityEmptyStateVue :imageNumber="1"></ActivityEmptyStateVue>
       </div>
     </div>
-
     <!-- Modal -->
     <PopupView v-if="deletePopup" :activityName="selectedData.title" @close-modal="eventModalClossed" @get-list-card="getListCardData" :activityId="selectedData.id"></PopupView>
   </div>
@@ -35,6 +37,7 @@
 
 <script>
 import Plus from "../../assets/images/PlusIcon.vue"
+// import SpinnerLoading from "../../assets/images/SpinnerLoading.gif"
 import DeleteButton from "../../assets/images/DeleteButton.vue";
 import ActivityEmptyStateVue from "@/components/ActivityEmptyState.vue";
 import PopupView from "@/components/PopupView.vue";
@@ -52,6 +55,7 @@ export default {
       listActivity: [],
       selectedId: 0,
       deletePopup: false,
+      initialLoading: true
     }
   },
   mounted() {
@@ -60,10 +64,10 @@ export default {
   methods: {
     getListCardData() {
       // const encodeEmail = encodeURIComponent("joshuahendrawan03@gmail.com")
-
+      this.initialLoading = true
       this.$http.get("https://todo.api.devcode.gethired.id/activity-groups", {params: {email: "joshuahendrawan03@gmail.com"}}).then((response) => {
         this.listActivity = response.data.data
-        console.log(this.listActivity)
+        this.initialLoading = false
       }, err => {
         console.log(err)
       })

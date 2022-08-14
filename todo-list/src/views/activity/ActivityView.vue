@@ -38,7 +38,10 @@
         </div>
       </div>
     </div>
-    <div class="activity-detail__empty-state">
+    <div class="dashboard__loading" v-if="initialLoading">
+      <img class="dashboard__loading-img" src="../../assets/images/SpinnerTransparent.gif" />
+    </div>
+    <div class="activity-detail__empty-state" v-else>
       <div class="activity-detail__list-item-container" v-if="listItem?.todo_items?.length > 0">
         <div data-cy="todo-item" class="activity-detail__list-item" v-for="(dt,index) in listItem.todo_items" :key="index">
           <div class="activity-detail__list-item-content">
@@ -123,6 +126,7 @@ export default {
       editStatus: "",
       typePassed: "",
       idPassed: 0,
+      initialLoading: true
     }
   },
   mounted() {
@@ -130,7 +134,9 @@ export default {
   },
   methods: {
     getListItem() {
+      this.initialLoading = true
       this.$http.get("https://todo.api.devcode.gethired.id/activity-groups/"+this.$route.params.id).then((response) => {
+        this.initialLoading = false
         this.listItem = response.data
         this.originalListItem = response.data
         this.selectSort("Terbaru")

@@ -87,4 +87,14 @@
 			}
 		}
 	}
+	&__loading {
+		display: flex;
+		margin-top: 64px;
+		align-items: center;
+		justify-content: center;
+		&-img {
+			width: 100px;
+			height: 100px;
+		}
+	}
 }
