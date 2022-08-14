@@ -2,20 +2,22 @@
   <div class="activity-detail__container">
     <div class="activity-detail__header">
       <div class="activity-detail__header-container">
-        <div class="activity-detail__header-back" @click="backToDashboard()">
+        <div data-cy="todo-back-button" class="activity-detail__header-back" @click="backToDashboard()">
           <ChevronLeftVue></ChevronLeftVue>
         </div>
-        <input data-cy="activity-title" class="activity-detail__header-text" :class="{'activity-detail__header-text_focused': inputFocused}" v-model="inputValue" v-show="inputFocused === true" @blur="setInputFocus(false)">
-        <p data-cy="activity-title" class="activity-detail__header-text" @click="setInputFocus(true)" v-show="inputFocused === false">{{inputValue}}</p>
-        <EditIcon></EditIcon>
+        <input data-cy="todo-title" class="activity-detail__header-text" :class="{'activity-detail__header-text_focused': inputFocused}" v-model="inputValue" v-show="inputFocused === true" @blur="setInputFocus(false)">
+        <p data-cy="todo-title" class="activity-detail__header-text" @click="setInputFocus(true)" v-show="inputFocused === false">{{inputValue}}</p>
+        <div data-cy="todo-title-edit-button" @click="setInputFocus(true)" class="activity-detail__header-edit">
+          <EditIcon></EditIcon>
+        </div>
       </div>
       <div class="activity-detail__header-button">
-        <div class="activity-detail__header-button-sort">
-          <div class="activity-detail__header-button-sort-shape" @click="setSortPopup()">
+        <div class="activity-detail__header-button-sort" v-click-outside="() => sortPopup = false">
+          <div data-cy="todo-sort-button" class="activity-detail__header-button-sort-shape" @click="setSortPopup()">
             <MenuArrow></MenuArrow>
           </div>
           <div class="activity-detail__header-button-sort-menu-container" v-if="sortPopup">
-            <div class="activity-detail__header-button-sort-menu" v-for="(dt, index) in sortList" :key="index" @click="selectSort(dt)">
+            <div :data-cy="dt === 'Terbaru' ? 'sort-latest' : dt === 'Terlama' ? 'sort-oldest' : dt === 'A-Z' ? 'sort-az' : dt === 'Z-A' ? 'sort-za' : 'sort-unfinished'"  class="activity-detail__header-button-sort-menu" v-for="(dt, index) in sortList" :key="index" @click="selectSort(dt)">
               <div class="activity-detail__header-button-sort-menu-item">
                 <SortLatest v-if="dt === 'Terbaru'"></SortLatest>
                 <SortOldest v-else-if="dt === 'Terlama'"></SortOldest>
@@ -30,29 +32,33 @@
             </div>
           </div>
         </div>
-        <div data-cy="activity-add-button" class="activity-detail__header-button-shape">
+        <div data-cy="todo-add-button" class="activity-detail__header-button-shape">
           <Plus></Plus>
           <p class="activity-detail__header-button-shape-text" @click="setVisibilityAddPopup()">Tambah</p>
         </div>
       </div>
     </div>
-    <div data-cy="todo-empty-state" class="activity-detail__empty-state">
+    <div class="activity-detail__empty-state">
       <div class="activity-detail__list-item-container" v-if="listItem?.todo_items?.length > 0">
-        <div class="activity-detail__list-item" v-for="(dt,index) in listItem.todo_items" :key="index">
+        <div data-cy="todo-item" class="activity-detail__list-item" v-for="(dt,index) in listItem.todo_items" :key="index">
           <div class="activity-detail__list-item-content">
-            <input type="checkbox" class="activity-detail__list-item-content-checkbox" :class="{'activity-detail__list-item-checkbox_checked': dt.is_active === false}" v-model="dt.is_active" @click="updateActive(dt)"/>
-            <StatusView :status="dt.priority"></StatusView>
-            <p class="activity-detail__list-item-content-title" :class="{'activity-detail__list-item-content-title_done': dt.is_active === true}">{{dt.title}}</p>
-            <div class="activity-detail__list-item-content-edit" @click="setVisibilityAddPopup('edit', dt)">
+            <input data-cy="todo-item-checkbox" type="checkbox" class="activity-detail__list-item-content-checkbox" :class="{'activity-detail__list-item-checkbox_checked': dt.is_active === false}" v-model="dt.is_active" @click="updateActive(dt)"/>
+            <div data-cy="todo-item-priority-indicator">
+              <StatusView :status="dt.priority"></StatusView>
+            </div>
+            <p data-cy="todo-item-title" class="activity-detail__list-item-content-title" :class="{'activity-detail__list-item-content-title_done': dt.is_active === true}">{{dt.title}}</p>
+            <div data-cy="todo-item-edit-button" class="activity-detail__list-item-content-edit" @click="setVisibilityAddPopup('edit', dt)">
               <EditIcon></EditIcon>
             </div>
-            <div class="activity-detail__list-item-content-delete" @click="setVisibilityDeletePopup(dt)">
+            <div data-cy="todo-item-delete-button" class="activity-detail__list-item-content-delete" @click="setVisibilityDeletePopup(dt)">
               <DeleteButtonVue></DeleteButtonVue>
             </div>
           </div>
         </div>
       </div>
-      <ActivityEmptyStateVue :imageNumber="2" v-else></ActivityEmptyStateVue>
+      <div data-cy="todo-empty-state" @click="setVisibilityAddPopup()" v-else>
+        <ActivityEmptyStateVue :imageNumber="2"></ActivityEmptyStateVue>
+      </div>
     </div>
 
     <!-- Modal -->

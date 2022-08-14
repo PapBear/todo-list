@@ -12,6 +12,9 @@
 		display: flex;
 		flex-direction: row;
 		align-items: center;
+		&-edit {
+			cursor: pointer;
+		}
 		&-text {
 			align-items: flex-start;
 			font-weight: 700;

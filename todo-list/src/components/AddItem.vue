@@ -1,20 +1,20 @@
 <template>
   <div class="modal__add">
     <div class="modal__add-mask" @click="closeModal()"></div>
-    <div class="modal__add-content" :class="{'modal__add-content_show': initialShow}" v-show="state === 'popup'">
+    <div data-cy="modal-add" class="modal__add-content" :class="{'modal__add-content_show': initialShow}" v-show="state === 'popup'">
       <div class="modal__add-content-header">
-        <p class="modal__add-content-header-text">Tambah List Item</p>
-        <div class="modal__add-content-header-icon" @click="closeModal()">
+        <p data-cy="modal-add-title" class="modal__add-content-header-text">Tambah List Item</p>
+        <div data-cy="modal-add-close-button" class="modal__add-content-header-icon" @click="closeModal()">
           <CloseIcon></CloseIcon>
         </div>
       </div>
       <div class="modal__add-content-body">
-        <p class="modal__add-content-body-title">Nama list item</p>
-        <input data-cy="activity-title" class="modal__add-content-body-input" :class="{'modal__add-content-body-input_focused': isFocused}" v-model="inputItem" :placeholder="'Tambahkan nama list item'" @focus="isFocused = true" @blur="isFocused = false">
+        <p data-cy="modal-add-name-title" class="modal__add-content-body-title">Nama list item</p>
+        <input data-cy="modal-add-name-input" class="modal__add-content-body-input" :class="{'modal__add-content-body-input_focused': isFocused}" v-model="inputItem" :placeholder="'Tambahkan nama list item'" @focus="isFocused = true" @blur="isFocused = false">
 
-        <p class="modal__add-content-body-title">Priority</p>
+        <p data-cy="modal-add-priority-title" class="modal__add-content-body-title">Priority</p>
         <div class="modal__add-content-body-priority-container">
-          <div class="modal__add-content-body-priority" :class="{'modal__add-content-body-priority_opened': openDropdown}" @click="setDropDown()">
+          <div data-cy="modal-add-priority-dropdown" class="modal__add-content-body-priority" :class="{'modal__add-content-body-priority_opened': openDropdown}" @click="setDropDown()">
             <StatusView :status="selectedPriority.value" :bigger="true" v-if="!openDropdown"></StatusView>
             <p class="modal__add-content-body-priority-text" v-if="!openDropdown">{{selectedPriority.text}}</p>
             <p class="modal__add-content-body-priority-text modal__add-content-body-priority-text_opened" v-else>Pilih priority</p>
@@ -24,7 +24,7 @@
             </div>
           </div>
           <div class="modal__add-content-body-priority-list" v-if="openDropdown">
-            <div class="modal__add-content-body-priority-list-card" v-for="(dt, index) in priorityList" :key="index" @click="selectPriority(dt)">
+            <div :data-cy="'modal-add-priority-'+dt.value" class="modal__add-content-body-priority-list-card" v-for="(dt, index) in priorityList" :key="index" @click="selectPriority(dt)">
               <StatusView :status="dt.value" :bigger="true"></StatusView>
               <p class="modal__add-content-body-priority-list-card-text">{{dt.text}}</p>
               <div class="modal__add-content-body-priority-list-card-checklist">
@@ -35,8 +35,8 @@
         </div>
 
       </div>
-      <div class="modal__add-content-button" @click="typeModal === 'edit' ? editItem() : createNewItem()">
-        <div class="modal__add-content-button-shape">
+      <div data-cy="modal-add-save-button" class="modal__add-content-button" @click="typeModal === 'edit' ? editItem() : createNewItem()">
+        <div class="modal__add-content-button-shape" :class="{'modal__add-content-button-shape_disabled': inputItem === ''}" >
           <p class="modal__add-content-button-shape-text">Simpan</p>
         </div>
       </div>
@@ -112,7 +112,6 @@ export default {
       this.initialShow = true
       this.firstLoad = true
 
-      console.log(this.typeModal)
       if(this.typeModal === "edit") {
         this.inputItem = this.titlePassed
         const filteredItem = this.priorityList.filter(dt => dt.value === this.statusPassed)
@@ -143,9 +142,12 @@ export default {
       this.openDropdown = false
     },
     createNewItem() {
+      if(this.inputItem === "") {
+        return
+      }
       const formData = {
         "activity_group_id": this.$route.params.id,
-        "title": this.inputItem,
+        "title": this.inputItem ? this.inputItem : "todo~",
         "priority": this.selectedPriority.value,
       }
       this.$http.post("https://todo.api.devcode.gethired.id/todo-items", formData).then(() => {
@@ -156,9 +158,12 @@ export default {
       })
     },
     editItem() {
+      if(this.inputItem === "") {
+        return
+      }
       const formData = {
         "priority": this.selectedPriority.value,
-        "title": this.inputItem,
+        "title": this.inputItem ? this.inputItem : "todo~",
       }
       this.$http.patch("https://todo.api.devcode.gethired.id/todo-items/"+this.idPassed, formData).then(() => {
         this.$emit("get-list-item")
@@ -345,6 +350,11 @@ export default {
                 line-height: 27px;
                 color: #FFFFFF;
                 margin-left: 6px;
+              }
+              &_disabled {
+                cursor: default;
+                opacity: 0.2;
+                background-color: #16ABF8;
               }
             }
           }

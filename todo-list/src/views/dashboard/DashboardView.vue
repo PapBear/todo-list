@@ -15,7 +15,7 @@
           <p dt-cy="activity-item-title" class="dashboard__list-card-text" @click="moveToDetail(dt.id)">{{dt.title}}</p>
           <div class="dashboard__list-card-bottom-section">
             <div class="dashboard__list-card-bottom-section-wrapper">
-              <p dt-cy="activity-item-title" class="dashboard__list-card-bottom-section-date">{{dt.created_at | moment("D MMMM YYYY")}}</p>
+              <p dt-cy="activity-item-date" class="dashboard__list-card-bottom-section-date">{{dt.created_at | moment("D MMMM YYYY")}}</p>
               <div dt-cy="activity-item-delete-button" class="dashboard__list-card-bottom-section-button" @click="setVisibilityDeletePopup(dt)">
                 <DeleteButton></DeleteButton>
               </div>
